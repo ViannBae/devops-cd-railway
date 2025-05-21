@@ -1,1 +1,31 @@
+name: CI/CD to Railway
+
+on:
+  push:
+    branches: [ main ]  # Menjalankan pipeline setiap kali ada push ke branch main
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run Tests
+      run: pytest
+
+    - name: Deploy to Railway
+      if: success()  # Hanya jika test berhasil
+      uses: railwayapp/railway-deploy-action@v1
+      with:
+        railwayToken: ${{ secrets.RAILWAY_TOKEN }}
 
